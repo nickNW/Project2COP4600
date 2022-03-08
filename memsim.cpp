@@ -1,27 +1,44 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+#include <algorithm>
 #include <vector>
 using namespace std;
 
-int fifo(vector<string> memFrame,vector<string> trace);
+struct pageEntry{
+    unsigned memAddress;
+    char readWrite;
 
-  
+    bool operator==(const pageEntry& other) const
+    {
+    return (memAddress == other.memAddress);
+    }
+};
+
+
+int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace);
+
 int main(int argc, char** argv)
 {
-    vector<string> trace;   
-    vector<string> memFrame;
-    string line;
-    ifstream myfile ("bzip.trace");
-    if (myfile.is_open())
-    {
-        while ( getline(myfile, line) )
-        {
-            trace.push_back(line);
-        }
-        myfile.close();
+    vector<pageEntry> trace;   
+    vector<pageEntry> memFrame;
+    FILE * fp;
+    fp = fopen("bizip.trace", "r");
+    if (fp == NULL) {
+        cout << "error fp is NULL" << endl;
+        return 1;
     }
-    else cout << "Unable to open file"; 
+
+    unsigned int addr;
+    unsigned int pageNum; 
+    char readWrite; 
+    while (fscanf(fp, "%x %c", &addr, &readWrite) != EOF) {
+        struct pageEntry entry;
+        pageNum = addr >> 12; 
+        entry.memAddress = pageNum; 
+        entry.readWrite = readWrite;
+        trace.push_back(entry);
+    }
     
     fifo(memFrame, trace);
 
@@ -30,21 +47,25 @@ int main(int argc, char** argv)
     
     return 0;
 }
-struct pageEntry{
-    string memAddress;
-    int readWrite;
-};
 
-int fifo(vector<string> memFrame,vector<string> trace){
+
+int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace){
     for (int i =0;i < trace.size(); i++ ){
-        struct pageEntry entry;
-        entry.memAddress = trace[i].substr(0, 7);
-        entry.readWrite = (trace[i][9]=='R'? 1 : 0);// Read == 1 Write == 0
-
+        if (memFrame.size() < 4096){
+            if (trace[i].readWrite == 'R')
+                memFrame.push_back(trace[i]);
+        }
+        else {
+            pageEntry temp = trace[i];
+            if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){
+                return 0;
+            }
+        }
         
         
     }
 
 //test
+
 
 }
