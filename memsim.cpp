@@ -14,16 +14,18 @@ struct pageEntry{
     return (memAddress == other.memAddress);
     }
 };
+int readCount = 0 ;
+int writeCount = 0 ;
+int hitCount =0;
 
-
-int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace);
+int fifo(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
 
 int main(int argc, char** argv)
 {
     vector<pageEntry> trace;   
     vector<pageEntry> memFrame;
     FILE * fp;
-    fp = fopen("bizip.trace", "r");
+    fp = fopen("bzip.trace", "r");
     if (fp == NULL) {
         cout << "error fp is NULL" << endl;
         return 1;
@@ -32,6 +34,7 @@ int main(int argc, char** argv)
     unsigned int addr;
     unsigned int pageNum; 
     char readWrite; 
+    int frameNum = 64;
     while (fscanf(fp, "%x %c", &addr, &readWrite) != EOF) {
         struct pageEntry entry;
         pageNum = addr >> 12; 
@@ -40,26 +43,41 @@ int main(int argc, char** argv)
         trace.push_back(entry);
     }
     
-    fifo(memFrame, trace);
+    fifo(memFrame, trace, frameNum);
 
-
-
+    cout<< "read " << readCount <<"\n";
+    cout<< "write " << writeCount <<"\n";
     
+
+
     return 0;
 }
 
 
-int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace){
+int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
     for (int i =0;i < trace.size(); i++ ){
-        if (memFrame.size() < 4096){
-            if (trace[i].readWrite == 'R')
-                memFrame.push_back(trace[i]);
+        if (memFrame.size() < frameNum){ //frame is not full 
+
+            readCount++;
+            memFrame.push_back(trace[i]);
+        
         }
         else {
             pageEntry temp = trace[i];
-            if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){
-                return 0;
+            if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){ //found in frame 
+                hitCount++;
             }
+            else
+            {
+                //pop if the poped value has W incriment write 
+                if (memFrame[0].readWrite == 'W' )
+                    writeCount++;
+                
+                memFrame.erase(memFrame.begin());
+                memFrame.push_back(trace[i]);
+                readCount++;
+            }
+            
         }
         
         
