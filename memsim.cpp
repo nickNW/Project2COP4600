@@ -8,6 +8,7 @@ using namespace std;
 struct pageEntry{
     unsigned memAddress;
     char readWrite;
+    bool isDirty;
 
     bool operator==(const pageEntry& other) const
     {
@@ -56,19 +57,27 @@ int main(int argc, char** argv)
 
 int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
     for (int i =0;i < trace.size(); i++ ){
-        if (memFrame.size() < frameNum){ //frame is not full 
+
+        pageEntry temp = trace[i];
+        if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){ //found in frame
+                int tempIndex;
+                if (temp.readWrite == 'W'){
+                    for(tempIndex = 0; tempIndex < memFrame.size(); tempIndex++){
+                        if (memFrame[tempIndex].memAddress == trace[i].memAddress)
+                            break;
+
+                    }
+                    memFrame[tempIndex].readWrite = 'W';
+                    
+                }
+        }
+        else{
+            if (memFrame.size() < frameNum){ //frame is not full 
 
             readCount++;
             memFrame.push_back(trace[i]);
-        
-        }
-        else {
-            pageEntry temp = trace[i];
-            if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){ //found in frame 
-                hitCount++;
             }
-            else
-            {
+            else {
                 //pop if the poped value has W incriment write 
                 if (memFrame[0].readWrite == 'W' )
                     writeCount++;
@@ -77,7 +86,6 @@ int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
                 memFrame.push_back(trace[i]);
                 readCount++;
             }
-            
         }
         
         
