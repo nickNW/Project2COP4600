@@ -20,6 +20,7 @@ int writeCount = 0 ;
 int hitCount =0;
 
 int fifo(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
+int LRU(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
 
 int main(int argc, char** argv)
 {
@@ -44,7 +45,7 @@ int main(int argc, char** argv)
         trace.push_back(entry);
     }
     
-    fifo(memFrame, trace, frameNum);
+    LRU(memFrame, trace, frameNum);
 
     cout<< "read " << readCount <<"\n";
     cout<< "write " << writeCount <<"\n";
@@ -86,12 +87,45 @@ int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
                 memFrame.push_back(trace[i]);
                 readCount++;
             }
-        }
-        
-        
+        }         
     }
+}
 
-//test
+int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
+    for (int i =0;i < trace.size(); i++ ){
+        pageEntry temp = trace[i];
+        if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){ //found in frame
+                int tempIndex;
+                if (temp.readWrite == 'W'){
+                    for(tempIndex = 0; tempIndex < memFrame.size(); tempIndex++){
+                        if (memFrame[tempIndex].memAddress == trace[i].memAddress)
+                            break;
 
+                    }
+                    memFrame[tempIndex].readWrite = 'W';
 
+                    pageEntry tempEntry = memFrame[tempIndex];
+                    memFrame.erase(memFrame.begin()+tempIndex);
+                    memFrame.push_back(tempEntry);
+                    
+                    
+                }
+        }
+        else{
+            if (memFrame.size() < frameNum){ //frame is not full 
+
+            readCount++;
+            memFrame.push_back(trace[i]);
+            }
+            else {
+                //pop if the poped value has W incriment write 
+                if (memFrame[0].readWrite == 'W' )
+                    writeCount++;
+                
+                memFrame.erase(memFrame.begin());
+                memFrame.push_back(trace[i]);
+                readCount++;
+            }
+        }         
+    }
 }
