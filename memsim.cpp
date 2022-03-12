@@ -21,6 +21,7 @@ int hitCount =0;
 
 int fifo(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
 int LRU(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
+void SFIFO(vector<pageEntry> trace, int percentage, int frameNum);
 
 int main(int argc, char** argv)
 {
@@ -97,7 +98,7 @@ int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
         if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){ //found in frame
                 int tempIndex;
                 if (temp.readWrite == 'W'){
-                    for(tempIndex = 0; tempIndex < memFrame.size(); tempIndex++){
+                    for(tempIndex = 0; tempIndex < memFrame.size()-1; tempIndex++){
                         if (memFrame[tempIndex].memAddress == trace[i].memAddress)
                             break;
 
@@ -113,7 +114,6 @@ int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
         }
         else{
             if (memFrame.size() < frameNum){ //frame is not full 
-
             readCount++;
             memFrame.push_back(trace[i]);
             }
@@ -126,6 +126,37 @@ int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
                 memFrame.push_back(trace[i]);
                 readCount++;
             }
-        }         
+        }
+    }
+}
+
+void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
+    int primaryBufferCount = frameNum * (percentage/100);
+    int secondaryBufferCount = frameNum - primaryBufferCount;
+    vector<pageEntry> primaryBuffer;
+
+    for (int i =0;i < trace.size(); i++ ){
+        pageEntry temp = trace[i];
+        if (find(primaryBuffer.begin(), primaryBuffer.end(), temp) != primaryBuffer.end()){ //found in frame
+                int tempIndex;
+                if (temp.readWrite == 'W'){
+                    for(tempIndex = 0; tempIndex < primaryBuffer.size(); tempIndex++){
+                        if (primaryBuffer[tempIndex].memAddress == trace[i].memAddress)
+                            break;
+
+                    }
+                    primaryBuffer[tempIndex].readWrite = 'W';
+                }
+        }
+        else { //not found in primary frame 
+            if (primaryBuffer.size() < primaryBufferCount){ //primary frame is not full 
+                readCount++;
+                primaryBuffer.push_back(trace[i]);
+            }
+            else{// primary frame is full  send to secondary buffer
+
+                
+            }
+        }
     }
 }
