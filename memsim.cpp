@@ -97,20 +97,20 @@ int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
         pageEntry temp = trace[i];
         if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){ //found in frame
                 int tempIndex;
-                if (temp.readWrite == 'W'){
-                    for(tempIndex = 0; tempIndex < memFrame.size()-1; tempIndex++){
-                        if (memFrame[tempIndex].memAddress == trace[i].memAddress)
-                            break;
-
-                    }
+                
+                for(tempIndex = 0; tempIndex < memFrame.size()-1; tempIndex++){
+                    if (memFrame[tempIndex].memAddress == trace[i].memAddress)
+                        break;
+                }
+                if (temp.readWrite == 'W')
                     memFrame[tempIndex].readWrite = 'W';
 
-                    pageEntry tempEntry = memFrame[tempIndex];
-                    memFrame.erase(memFrame.begin()+tempIndex);
-                    memFrame.push_back(tempEntry);
+                pageEntry tempEntry = memFrame[tempIndex];
+                memFrame.erase(memFrame.begin()+tempIndex);
+                memFrame.push_back(tempEntry);
                     
                     
-                }
+                
         }
         else{
             if (memFrame.size() < frameNum){ //frame is not full 
@@ -204,6 +204,20 @@ void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
         }
 
         else if (foundIn == 2){//found in the secondary frame
+            pageEntry temp = trace[i];
+            int tempIndex;
+            if (temp.readWrite == 'W'){
+                for(tempIndex = 0; tempIndex < secondaryBuffer.size()-1; tempIndex++){
+                    if (secondaryBuffer[tempIndex].memAddress == trace[i].memAddress)
+                        break;
+
+                }
+                secondaryBuffer[tempIndex].readWrite = 'W';
+
+                pageEntry tempEntry = secondaryBuffer[tempIndex];
+                secondaryBuffer.erase(secondaryBuffer.begin()+tempIndex);
+                secondaryBuffer.push_back(tempEntry);
+            }
 
         } 
         
