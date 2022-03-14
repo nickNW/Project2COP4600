@@ -114,8 +114,8 @@ int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
         }
         else{
             if (memFrame.size() < frameNum){ //frame is not full 
-            readCount++;
-            memFrame.push_back(trace[i]);
+                readCount++;
+                memFrame.push_back(trace[i]);
             }
             else {
                 //pop if the poped value has W incriment write 
@@ -134,8 +134,10 @@ void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
     int primaryBufferCount = frameNum * (percentage/100);
     int secondaryBufferCount = frameNum - primaryBufferCount;
     vector<pageEntry> primaryBuffer;
+    vector<pageEntry> secondaryBuffer;
 
     for (int i =0;i < trace.size(); i++ ){
+        int foundIn = 0; //1 is primary 2 is secondary 
         pageEntry temp = trace[i];
         if (find(primaryBuffer.begin(), primaryBuffer.end(), temp) != primaryBuffer.end()){ //found in frame
                 int tempIndex;
@@ -147,16 +149,64 @@ void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
                     }
                     primaryBuffer[tempIndex].readWrite = 'W';
                 }
+                foundIn = 1;
         }
-        else { //not found in primary frame 
+        if (find(secondaryBuffer.begin(), secondaryBuffer.end(), temp) != secondaryBuffer.end()){ //found in frame
+                int tempIndex;
+                if (temp.readWrite == 'W'){
+                    for(tempIndex = 0; tempIndex < secondaryBuffer.size(); tempIndex++){
+                        if (secondaryBuffer[tempIndex].memAddress == trace[i].memAddress)
+                            break;
+
+                    }
+                    secondaryBuffer[tempIndex].readWrite = 'W';
+
+                    pageEntry tempEntry = secondaryBuffer[tempIndex];
+                    secondaryBuffer.erase(secondaryBuffer.begin()+tempIndex);
+                    secondaryBuffer.push_back(tempEntry);
+                }
+                foundIn = 2;
+        }
+        else if (foundIn == 0) { //not found in primary frame or secondary 
             if (primaryBuffer.size() < primaryBufferCount){ //primary frame is not full 
                 readCount++;
                 primaryBuffer.push_back(trace[i]);
             }
-            else{// primary frame is full  send to secondary buffer
-
-                
+            else if (primaryBuffer.size() >= primaryBufferCount && secondaryBuffer.size() < secondaryBufferCount ) {
+                // primary frame is full and secondary frame is not full
+                //move from primary to secondary and insert new value into primary 
+                secondaryBuffer.push_back(primaryBuffer[0]);
+                primaryBuffer.erase(primaryBuffer.begin());
+                primaryBuffer.push_back(trace[i]);
+                readCount++; 
+            }
+            else if (primaryBuffer.size() >= primaryBufferCount && secondaryBuffer.size() >= secondaryBufferCount ) {
+                //primary frame is full and secondary frame is full
+                ////move from primary to secondary and insert new value into primary remove from secondary 
+                secondaryBuffer.erase(secondaryBuffer.begin());
+                secondaryBuffer.push_back(primaryBuffer[0]);
+                primaryBuffer.erase(primaryBuffer.begin());
+                primaryBuffer.push_back(trace[i]);
+                readCount++; 
             }
         }
+
+        else if(foundIn == 1){ //found in the primary frame
+             int tempIndex;
+                if (temp.readWrite == 'W'){
+                    for(tempIndex = 0; tempIndex < primaryBuffer.size(); tempIndex++){
+                        if (primaryBuffer[tempIndex].memAddress == trace[i].memAddress)
+                            break;
+
+                    }
+                    primaryBuffer[tempIndex].readWrite = 'W';
+                }
+        }
+
+        else if (foundIn == 2){//found in the secondary frame
+
+        } 
+        
+
     }
 }
