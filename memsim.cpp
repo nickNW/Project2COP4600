@@ -183,6 +183,9 @@ void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
             else if (primaryBuffer.size() >= primaryBufferCount && secondaryBuffer.size() >= secondaryBufferCount ) {
                 //primary frame is full and secondary frame is full
                 ////move from primary to secondary and insert new value into primary remove from secondary 
+                if (secondaryBuffer[0].readWrite == 'W' )
+                    writeCount++;
+                    
                 secondaryBuffer.erase(secondaryBuffer.begin());
                 secondaryBuffer.push_back(primaryBuffer[0]);
                 primaryBuffer.erase(primaryBuffer.begin());
@@ -203,21 +206,22 @@ void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
                 }
         }
 
-        else if (foundIn == 2){//found in the secondary frame
+        else if (foundIn == 2){ //found in the secondary frame
             pageEntry temp = trace[i];
             int tempIndex;
-            if (temp.readWrite == 'W'){
-                for(tempIndex = 0; tempIndex < secondaryBuffer.size()-1; tempIndex++){
-                    if (secondaryBuffer[tempIndex].memAddress == trace[i].memAddress)
-                        break;
-
-                }
+                
+            for(tempIndex = 0; tempIndex < secondaryBuffer.size()-1; tempIndex++){
+                if (secondaryBuffer[tempIndex].memAddress == trace[i].memAddress)
+                    break;
+            }
+            if (temp.readWrite == 'W')
                 secondaryBuffer[tempIndex].readWrite = 'W';
 
-                pageEntry tempEntry = secondaryBuffer[tempIndex];
-                secondaryBuffer.erase(secondaryBuffer.begin()+tempIndex);
-                secondaryBuffer.push_back(tempEntry);
-            }
+            pageEntry tempEntry = secondaryBuffer[tempIndex];
+            secondaryBuffer.erase(secondaryBuffer.begin()+tempIndex);
+            primaryBuffer.push_back(tempEntry);
+            secondaryBuffer.push_back(primaryBuffer[0]);
+            primaryBuffer.erase(primaryBuffer.begin());
 
         } 
         
