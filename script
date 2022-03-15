@@ -1,0 +1,100 @@
+#!/bin/bash
+
+echo "bzip.trace 8 fifo" >> data.txt
+./memsim bzip.trace 8 fifo
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 16 fifo" >> data.txt
+./memsim bzip.trace 16 fifo
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 32 fifo" >> data.txt
+./memsim bzip.trace 32 fifo
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 64 fifo" >> data.txt
+./memsim bzip.trace 64 fifo
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 128 fifo" >> data.txt
+./memsim bzip.trace 128 fifo
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 256 fifo" >> data.txt
+./memsim bzip.trace 256 fifo
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 8 fifo" >> data.txt
+./memsim sixpack.trace 8 fifo
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 16 fifo" >> data.txt
+./memsim sixpack.trace 16 fifo
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 32 fifo" >> data.txt
+./memsim sixpack.trace 32 fifo
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 64 fifo" >> data.txt
+./memsim sixpack.trace 64 fifo
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 128 fifo" >> data.txt
+./memsim sixpack.trace 128 fifo
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 256 fifo" >> data.txt
+./memsim sixpack.trace 256 fifo
+echo "-------------------" >> data.txt
+
+#lruData
+
+echo "bzip.trace 8 lru" >> data.txt
+./memsim bzip.trace 8 lru
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 16 lru" >> data.txt
+./memsim bzip.trace 16 lru
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 32 lru" >> data.txt
+./memsim bzip.trace 32 lru
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 64 lru" >> data.txt
+./memsim bzip.trace 64 lru
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 128 lru" >> data.txt
+./memsim bzip.trace 128 lru
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 256 lru" >> data.txt
+./memsim bzip.trace 256 lru
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 8 lru" >> data.txt
+./memsim sixpack.trace 8 lru
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 16 lru" >> data.txt
+./memsim sixpack.trace 16 lru
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 32 lru" >> data.txt
+./memsim sixpack.trace 32 lru
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 64 lru" >> data.txt
+./memsim sixpack.trace 64 lru
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 128 lru" >> data.txt
+./memsim sixpack.trace 128 lru
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 256 lru" >> data.txt
+./memsim sixpack.trace 256 lru
+echo "-------------------" >> data.txt
+
