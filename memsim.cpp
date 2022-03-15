@@ -3,6 +3,7 @@
 #include <string>
 #include <algorithm>
 #include <vector>
+#include <stdlib.h>
 using namespace std;
 
 struct pageEntry{
@@ -18,17 +19,24 @@ struct pageEntry{
 int readCount = 0 ;
 int writeCount = 0 ;
 int hitCount =0;
+int missCount =0;
 
-int fifo(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
-int LRU(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
-void SFIFO(vector<pageEntry> trace, int percentage, int frameNum);
+void fifo(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
+void LRU(vector<pageEntry> memFrame, vector<pageEntry> trace, int frameNum);
+void SFIFO(vector<pageEntry> trace, double percentage, int frameNum);
 
 int main(int argc, char** argv)
 {
+    char* fileName = argv[1];
+    int frameNum = atoi(argv[2]);
+    string algorithm = argv[3];
+    
+
+
     vector<pageEntry> trace;   
     vector<pageEntry> memFrame;
     FILE * fp;
-    fp = fopen("bzip.trace", "r");
+    fp = fopen(fileName, "r");
     if (fp == NULL) {
         cout << "error fp is NULL" << endl;
         return 1;
@@ -37,7 +45,7 @@ int main(int argc, char** argv)
     unsigned int addr;
     unsigned int pageNum; 
     char readWrite; 
-    int frameNum = 64;
+    //int frameNum = 64;
     while (fscanf(fp, "%x %c", &addr, &readWrite) != EOF) {
         struct pageEntry entry;
         pageNum = addr >> 12; 
@@ -46,22 +54,47 @@ int main(int argc, char** argv)
         trace.push_back(entry);
     }
     
-    LRU(memFrame, trace, frameNum);
+    if (algorithm == "fifo")
+        fifo(memFrame, trace, frameNum);
+    else if (algorithm == "lru")
+        LRU(memFrame, trace, frameNum);
+    else if(algorithm == "vms"){
+        double percent = atoi(argv[4]);
+        if (percent == 0)
+            fifo(memFrame, trace, frameNum);
+        else if (percent == 100)
+            LRU(memFrame, trace, frameNum);
+        else
+            SFIFO(trace,percent, frameNum);
+    }
 
-    cout<< "read " << readCount <<"\n";
-    cout<< "write " << writeCount <<"\n";
+    cout<< "Memory Frames " << frameNum <<"\n";
+    cout << "Trace Count " << "1000000" << "\n";
+    cout<< "Read Count " << readCount <<"\n";
+    cout<< "Write Count " << writeCount <<"\n";
     
 
+    ofstream myfile;
+    myfile.open ("data.txt", ios::app);
+    //myfile<< "Input" << argv[1] <<" "<< argv[2] <<" "<< argv[3] <<"\n";
+    myfile<< "Memory Frames " << frameNum <<"\n";
+    myfile << "Trace Count " << "1000000" << "\n";
+    myfile<< "Read Count " << readCount <<"\n";
+    myfile<< "Write Count " << writeCount <<"\n";
+    myfile<< "Hit Count " << hitCount <<"\n";
+    myfile<< "Miss Count " << missCount <<"\n";
+    myfile.close();
 
     return 0;
 }
 
 
-int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
+void fifo(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
     for (int i =0;i < trace.size(); i++ ){
 
         pageEntry temp = trace[i];
         if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){ //found in frame
+                hitCount++;
                 int tempIndex;
                 if (temp.readWrite == 'W'){
                     for(tempIndex = 0; tempIndex < memFrame.size(); tempIndex++){
@@ -70,10 +103,10 @@ int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
 
                     }
                     memFrame[tempIndex].readWrite = 'W';
-                    
                 }
         }
         else{
+            missCount++;
             if (memFrame.size() < frameNum){ //frame is not full 
 
             readCount++;
@@ -92,12 +125,12 @@ int fifo(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
     }
 }
 
-int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
+void LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
     for (int i =0;i < trace.size(); i++ ){
         pageEntry temp = trace[i];
         if (find(memFrame.begin(), memFrame.end(), temp) != memFrame.end()){ //found in frame
                 int tempIndex;
-                
+                hitCount++;
                 for(tempIndex = 0; tempIndex < memFrame.size()-1; tempIndex++){
                     if (memFrame[tempIndex].memAddress == trace[i].memAddress)
                         break;
@@ -113,6 +146,7 @@ int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
                 
         }
         else{
+            missCount++;
             if (memFrame.size() < frameNum){ //frame is not full 
                 readCount++;
                 memFrame.push_back(trace[i]);
@@ -130,9 +164,9 @@ int LRU(vector<pageEntry> memFrame,vector<pageEntry> trace, int frameNum){
     }
 }
 
-void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
-    int primaryBufferCount = frameNum * (percentage/100);
-    int secondaryBufferCount = frameNum - primaryBufferCount;
+void SFIFO(vector<pageEntry> trace, double percentage, int frameNum){
+    int secondaryBufferCount = frameNum * (percentage/100);  
+    int primaryBufferCount = frameNum - secondaryBufferCount;
     vector<pageEntry> primaryBuffer;
     vector<pageEntry> secondaryBuffer;
 
@@ -140,6 +174,7 @@ void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
         int foundIn = 0; //1 is primary 2 is secondary 
         pageEntry temp = trace[i];
         if (find(primaryBuffer.begin(), primaryBuffer.end(), temp) != primaryBuffer.end()){ //found in frame
+                hitCount++;
                 int tempIndex;
                 if (temp.readWrite == 'W'){
                     for(tempIndex = 0; tempIndex < primaryBuffer.size(); tempIndex++){
@@ -153,21 +188,23 @@ void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
         }
         if (find(secondaryBuffer.begin(), secondaryBuffer.end(), temp) != secondaryBuffer.end()){ //found in frame
                 int tempIndex;
-                if (temp.readWrite == 'W'){
-                    for(tempIndex = 0; tempIndex < secondaryBuffer.size(); tempIndex++){
-                        if (secondaryBuffer[tempIndex].memAddress == trace[i].memAddress)
-                            break;
+                hitCount++;
+                for(tempIndex = 0; tempIndex < secondaryBuffer.size(); tempIndex++){
+                    if (secondaryBuffer[tempIndex].memAddress == trace[i].memAddress)
+                        break;
 
-                    }
+                }
+                if (temp.readWrite == 'W')
                     secondaryBuffer[tempIndex].readWrite = 'W';
 
-                    pageEntry tempEntry = secondaryBuffer[tempIndex];
-                    secondaryBuffer.erase(secondaryBuffer.begin()+tempIndex);
-                    secondaryBuffer.push_back(tempEntry);
-                }
+                pageEntry tempEntry = secondaryBuffer[tempIndex];
+                secondaryBuffer.erase(secondaryBuffer.begin()+tempIndex);
+                secondaryBuffer.push_back(tempEntry);
+                
                 foundIn = 2;
         }
         else if (foundIn == 0) { //not found in primary frame or secondary 
+            missCount++;
             if (primaryBuffer.size() < primaryBufferCount){ //primary frame is not full 
                 readCount++;
                 primaryBuffer.push_back(trace[i]);
@@ -195,31 +232,13 @@ void SFIFO(vector<pageEntry> trace, int percentage, int frameNum){
         }
 
         else if(foundIn == 1){ //found in the primary frame
-             int tempIndex;
-                if (temp.readWrite == 'W'){
-                    for(tempIndex = 0; tempIndex < primaryBuffer.size(); tempIndex++){
-                        if (primaryBuffer[tempIndex].memAddress == trace[i].memAddress)
-                            break;
-
-                    }
-                    primaryBuffer[tempIndex].readWrite = 'W';
-                }
+             
         }
 
         else if (foundIn == 2){ //found in the secondary frame
-            pageEntry temp = trace[i];
-            int tempIndex;
-                
-            for(tempIndex = 0; tempIndex < secondaryBuffer.size()-1; tempIndex++){
-                if (secondaryBuffer[tempIndex].memAddress == trace[i].memAddress)
-                    break;
-            }
-            if (temp.readWrite == 'W')
-                secondaryBuffer[tempIndex].readWrite = 'W';
-
-            pageEntry tempEntry = secondaryBuffer[tempIndex];
-            secondaryBuffer.erase(secondaryBuffer.begin()+tempIndex);
-            primaryBuffer.push_back(tempEntry);
+      
+            primaryBuffer.push_back(secondaryBuffer[0]);
+            secondaryBuffer.erase(secondaryBuffer.begin());
             secondaryBuffer.push_back(primaryBuffer[0]);
             primaryBuffer.erase(primaryBuffer.begin());
 
