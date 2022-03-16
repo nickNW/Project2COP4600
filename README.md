@@ -1,9 +1,10 @@
 The project requirements are described in p2-memsim.pdf. Use memory traces that are stored in two files: 
-bzip.trace.zip and sixpack.trace.zip. You are to implement a page replacement algorithm presented in this paper.   
-Files necessary to compile the program: 
-     memsim.c : main interface of the simulator, it takes user input in two forms and Runs algorithms 
+bzip.trace.zip and sixpack.trace.zip. You are to implement a page replacement algorithm presented in this paper.
 
-To compile the program: 
+Files necessary to compile the program: 
+    memsim.c : main interface of the simulator, it takes user input in two forms and Runs algorithms 
+
+To compile the program:    
     Compile using g++ -o  memsim  memsim.cpp
 
 
