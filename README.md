@@ -1,13 +1,27 @@
-Compile using g++ -o  memsim  memsim.cpp
+The project requirements are described in p2-memsim.pdf. Use memory traces that are stored in two files: 
+bzip.trace.zip and sixpack.trace.zip. You are to implement a page replacement algorithm presented in this paper.   
+Files necessary to compile the program: 
+     memsim.c : main interface of the simulator, it takes user input in two forms and Runs algorithms 
 
-Give permissions to run script run: chmod +x ./script
+To compile the program: 
+    Compile using g++ -o  memsim  memsim.cpp
 
-Script will run a list of commands for memsim and output it to data.txt file 
 
-data will be used for report 
+To run the program: 
+The program can be run with two types of input format 
+1. For fifo and lru use the following format: 
+./memsim tracefile nFrames policy quiet/debug 
+ 
+2. For segmented fifo use the following format: 
+./memsim tracefile nframes policy percentage quiet/debug 
 
-edit script with any list of commands you would like to run on the data. 
 
-run script by using 
 
-./script
+__________Running Examples________________ 
+./memsim bzip.trace 64 fifo quiet 
+total memory frames: 64 
+events in trace: 1000000 
+total disk reads: 1467 
+total disk writes: 514 
+
+
