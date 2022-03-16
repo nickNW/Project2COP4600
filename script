@@ -1,5 +1,5 @@
 #!/bin/bash
-
+<<COMMENT
 echo "bzip.trace 8 fifo" >> data.txt
 ./memsim bzip.trace 8 fifo
 echo "-------------------" >> data.txt
@@ -97,4 +97,155 @@ echo "-------------------" >> data.txt
 echo "sixpack.trace 256 lru" >> data.txt
 ./memsim sixpack.trace 256 lru
 echo "-------------------" >> data.txt
+COMMENT
+
+echo "sixpack.trace 8 vms 25" >> data.txt
+./memsim sixpack.trace 8 vms 25
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 16 vms 25" >> data.txt
+./memsim sixpack.trace 16 vms 25
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 32 vms 25" >> data.txt
+./memsim sixpack.trace 32 vms 25
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 64 vms 25" >> data.txt
+./memsim sixpack.trace 64 vms 25
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 128 vms 25" >> data.txt
+./memsim sixpack.trace 128 vms 25
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 256 vms 25" >> data.txt
+./memsim sixpack.trace 256 vms 25
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 8 vms 50" >> data.txt
+./memsim sixpack.trace 8 vms 50
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 16 vms 50" >> data.txt
+./memsim sixpack.trace 16 vms 50
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 32 vms 50" >> data.txt
+./memsim sixpack.trace 32 vms 50
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 64 vms 50" >> data.txt
+./memsim sixpack.trace 64 vms 50
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 128 vms 50" >> data.txt
+./memsim sixpack.trace 128 vms 50
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 256 vms 50" >> data.txt
+./memsim sixpack.trace 256 vms 50
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 8 vms 75" >> data.txt
+./memsim sixpack.trace 8 vms 75
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 16 vms 75" >> data.txt
+./memsim sixpack.trace 16 vms 75
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 32 vms 75" >> data.txt
+./memsim sixpack.trace 32 vms 75
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 64 vms 75" >> data.txt
+./memsim sixpack.trace 64 vms 75
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 128 vms 75" >> data.txt
+./memsim sixpack.trace 128 vms 75
+echo "-------------------" >> data.txt
+
+echo "sixpack.trace 256 vms 75" >> data.txt
+./memsim sixpack.trace 256 vms 75
+echo "-------------------" >> data.txt
+
+
+
+
+
+
+echo "bzip.trace 8 vms 25" >> data.txt
+./memsim bzip.trace 8 vms 25
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 16 vms 25" >> data.txt
+./memsim bzip.trace 16 vms 25
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 32 vms 25" >> data.txt
+./memsim bzip.trace 32 vms 25
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 64 vms 25" >> data.txt
+./memsim bzip.trace 64 vms 25
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 128 vms 25" >> data.txt
+./memsim bzip.trace 128 vms 25
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 256 vms 25" >> data.txt
+./memsim bzip.trace 256 vms 25
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 8 vms 50" >> data.txt
+./memsim bzip.trace 8 vms 50
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 16 vms 50" >> data.txt
+./memsim bzip.trace 16 vms 50
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 32 vms 50" >> data.txt
+./memsim bzip.trace 32 vms 50
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 64 vms 50" >> data.txt
+./memsim bzip.trace 64 vms 50
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 128 vms 50" >> data.txt
+./memsim bzip.trace 128 vms 50
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 256 vms 50" >> data.txt
+./memsim bzip.trace 256 vms 50
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 8 vms 75" >> data.txt
+./memsim bzip.trace 8 vms 75
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 16 vms 75" >> data.txt
+./memsim bzip.trace 16 vms 75
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 32 vms 75" >> data.txt
+./memsim bzip.trace 32 vms 75
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 64 vms 75" >> data.txt
+./memsim bzip.trace 64 vms 75
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 128 vms 75" >> data.txt
+./memsim bzip.trace 128 vms 75
+echo "-------------------" >> data.txt
+
+echo "bzip.trace 256 vms 75" >> data.txt
+./memsim bzip.trace 256 vms 75
+echo "-------------------" >> data.txt
+
 

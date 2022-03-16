@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     cout<< "Read Count " << readCount <<"\n";
     cout<< "Write Count " << writeCount <<"\n";
     
-
+/*
     ofstream myfile;
     myfile.open ("data.txt", ios::app);
     //myfile<< "Input" << argv[1] <<" "<< argv[2] <<" "<< argv[3] <<"\n";
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
     myfile<< "Hit Count " << hitCount <<"\n";
     myfile<< "Miss Count " << missCount <<"\n";
     myfile.close();
-
+*/
     return 0;
 }
 
